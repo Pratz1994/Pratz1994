@@ -26,7 +26,7 @@ http://propellerheadtechtest.azurewebsites.net/
 
 - I have my views and scripts inside View folder.
 
-- My controllers are inside Controller Folder.
+- Controllers are inside Controller Folder.
 
 - Main layout is inside Shared folder.
 
