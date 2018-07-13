@@ -1,0 +1,194 @@
+﻿@model IEnumerable<Pratz.Customer>
+@{
+    ViewBag.Title = "Index";
+}
+
+<br />
+<br />
+<h3>Customer Details</h3>
+
+<p>
+    <a href="#" class="ui blue button" onclick="AddNewCustomer()">Add New Customer</a>
+</p>
+<table class="ui definition  table">
+    <tr>
+        <th>Id</th>
+        <th>Customer Name</th>
+        <th>Status</th>
+        <th>Address</th>
+        <th>Date</th>
+        <th>Note</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tbody id="myTables">
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Contact)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Notes)
+                </td>
+            </tr>
+        </tbody>
+    }
+
+    <tbody id="setData">
+        <tr><td colspan="4" class="text-center"><img src="~/Content/Images/onloading.gif" id="load" style="display:none" /></td> </tr>
+    </tbody>
+
+</table>
+
+@*Create A popup modal*@
+<div class="ui modal" id="MyModal" style="height:656px;width:60%;">
+    <div class="header text-center">
+        Customer Detail
+    </div>
+    <h4 class="text-info" id="title"></h4>
+    <div class="content">
+        <form id="form">
+            <div class="form-group" id="customerId">
+                <label for="Id">Customer ID</label>
+                <input type="text" id="Id" name="Id" readonly class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Please input the customer name" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" placeholder="please input the customer address" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="address">Status</label>
+                <select class="ui fluid selection dropdown" id="status" name="status">
+                    <option value="Prospective">Prospective</option>
+                    <option value="Current">Current</option>
+                    <option value="Non-active">Non-active</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Contact</label>
+                <input type="number" id="contact" name="contact" placeholder="please input the customer address" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="address">Date</label>
+                <input id="date" name="date" placeholder="date" readonly class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="address">Notes</label>
+                <textarea type="text" id="notes" name="notes" placeholder="please input the customer address" class="form-control"></textarea>
+            </div>
+            <div class="action text-right">
+                <div class="two fluid ui inverted buttons">
+                    <a href="#" class="ui approve green button" id="SaveRecord">Save</a>
+                    <a href="#" class="ui cancel red inverted button" id="cancel" onclick="SaveCancel()">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript">
+
+
+        function AddNewCustomer() {
+           
+            $("#MyModal").modal("show");
+            AutoDate();
+            $("#title").html("Add a new customer detail.")
+            $("#customerId").hide();
+            if ($("#Id").val() > 0) {
+                $("#MyModal input").val("");
+
+            }
+        }
+
+        function SaveCancel() {
+            $("#MyModal").modal("hide")
+        }
+        function DeleteCancel() {
+            $("#DeleteConfirm").modal("hide")
+        }
+
+        function Validation() {
+            if ($("#name").val().length == 0 || $("#address").val().length == 0 || $("#status").val().length == 0 || $("#contact").val().length == 0) {
+                alert("Please input the customer name and address!")
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function AutoDate() {
+
+            var currentTime = new Date();
+            y = currentTime.getFullYear();
+            m = currentTime.getMonth() + 1;
+            d = currentTime.getDate();
+
+            hours = currentTime.getHours(),
+                minutes = currentTime.getMinutes();
+
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            var dd = d + "/" + m + "/" + y + " " + hours + ":" + minutes;
+            $("#date").val(dd);
+            console.log(dd);
+        }
+
+
+        $("#SaveRecord").click(function () {
+
+            if (Validation()) {
+                var data = $("#form").serialize();
+                var url = "";
+                if ($("#Id").val() > 0) {
+                    url = "/Customer/UpdateCustomer"
+                }
+                else {
+                    url = "/Customer/AddCustomer"
+                }
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: data,
+                    success: function (result) {
+                        alert("Add Success...");
+                        window.location = "/Customer/Index";
+                        $("#MyModal").hide();
+                    },
+                    error: function (error) {
+                        alert(error);
+                    }
+                });
+            }
+            else {
+                return;
+            }
+        })
+
+    </script>
+}
+
+

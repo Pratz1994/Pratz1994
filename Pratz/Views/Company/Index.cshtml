@@ -1,0 +1,238 @@
+﻿@model IEnumerable<Pratz.CompanyTable>
+
+@{
+    ViewBag.Title = "Index";
+    //Layout = "~/Views/Home/Contact.cshtml";
+}
+
+<br />
+<br />
+<h3>Company Details</h3>
+
+<div style="float: left">
+    <button type="button" class="btn btn-primary" onclick="FilterByName()">Sort By Name</button>
+</div>
+<div style="float: right" class="ui search">
+    <div class="ui icon input">
+        <input class="form-control" id="myInput" type="text" placeholder="Search and Enter">
+    </div>
+</div>
+<br />
+<br />
+@*Create A popup modal*@
+<div class="ui modal" id="MyModal" style="height:626px;width:60%;">
+    <div class="header text-center">
+        Customer Detail
+    </div>
+    <h4 class="text-info" id="title"></h4>
+    <div class="content">
+        <form id="form">
+            <div class="form-group" id="customerId">
+                <label for="Id">Customer ID</label>
+                <input type="text" id="Id" name="Id" readonly class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Please input the customer name" readonly class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" placeholder="please input the customer address" readonly class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="address">Status</label>
+                <select class="ui fluid selection dropdown" id="status" name="status">
+                    <option value="Prospective">Prospective</option>
+                    <option value="Current">Current</option>
+                    <option value="Non-active">Non-active</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="address">Date</label>
+                <input id="date" name="date" placeholder="date" readonly class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="address">Notes</label>
+                <textarea type="text" id="notes" name="notes" placeholder="please input the customer address" class="form-control" ></textarea>
+            </div>
+            <div class="action text-right">
+                <div class="two fluid ui inverted buttons">
+                    <a href="#" class="ui approve green button" id="SaveRecord">Save</a>
+                    <a href="#" class="ui cancel red inverted button" id="cancel" onclick="SaveCancel()">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table class="ui definition  table" id="myTable">
+    <tr>
+        <th>Customer Name</th>
+        <th>Address</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Note</th>
+        <th>Action (View)</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tbody id="myTables">
+            <tr>
+                <td class="all name">
+                    @Html.DisplayFor(modelItem => item.Customer.Name)
+                </td>
+                <td class="all address">
+                    @Html.DisplayFor(modelItem => item.Customer.Address)
+                </td>
+                <td class="all Status">
+                    @Html.DisplayFor(modelItem => item.Customer.Status)
+                </td>
+                <td class="all Date">
+                    @Html.DisplayFor(modelItem => item.Customer.Date)
+                </td>
+                <td class="all notes">
+                    @Html.DisplayFor(modelItem => item.Customer.Notes)
+                </td>
+                <td>
+                    <a class="ui orange  button" onclick="Edit(@item.Customer.Id)"><i class='edit icon'></i>View</a>
+                </td>
+            </tr>
+        </tbody>
+    }
+</table>
+
+@section scripts{
+    <script type="text/javascript">
+        {
+            function FilterByName() {
+
+                var table, rows, switching, i, x, y, shouldSwitch;
+                table = document.getElementById("myTable");
+                switching = true;
+
+                while (switching) {
+
+                    switching = false;
+                    rows = table.getElementsByTagName("TR");
+
+                    for (i = 1; i < (rows.length - 1); i++) {
+                        //start by saying there should be no switching:
+                        shouldSwitch = false;
+
+                        x = rows[i].getElementsByTagName("TD")[0];
+                        y = rows[i + 1].getElementsByTagName("TD")[0];
+
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                    if (shouldSwitch) {
+                        /*If a switch has been marked, make the switch
+                        and mark that a switch has been done:*/
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                    }
+
+                }
+            }
+
+            $('#myInput').change(function () {
+                {
+                    $("#myInput").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $("#myTables tr").filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                }
+            });
+
+            function SaveCancel() {
+                $("#MyModal").modal("hide")
+                parent.location.reload();
+            }
+            function DeleteCancel() {
+                $("#DeleteConfirm").modal("hide")
+            }
+            function Validation() {
+                if ($("#Id").val().length == 0) {
+                    alert("Please input all the sales detail!")
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            $("#SaveRecord").click(function () {
+
+                if (Validation()) {
+                    var data = $("#form").serialize();
+                    var id = $("#Id").val();
+                    var url = "";
+                    if (id > 0) {
+                        url = "/Company/Edit";
+                        console.log("update....")
+                    }
+                    else {
+                        url = "/Company/Create"
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        success: function (result) {
+                            alert("Add Success...");
+                            window.location = "/Company/index";
+                            $("#MyModal").hide();
+                        },
+                        error: function (error) {
+                            alert(error);
+                        }
+                    });
+                }
+                else {
+                    return;
+                }
+            })
+
+            function ConfirmDelete() {
+                var CusId = $("#SalesID").val();
+                $.ajax({
+                    type: "GET",
+                    url: "/Company/Delete?id=" + CusId,
+                    success: function (result) {
+                        alert("Delete Sales Record Success.");
+                        $("#DeleteConfirm").modal("hide");
+                        window.location = "/Sales/index";
+                    },
+                })
+            }
+            function Edit(Id) {
+                
+                var url = "/Company/GetCustomerById?id=" + Id;
+                $("#title").html("Update customer record");
+                $("#MyModal").modal("show");
+                $("footer").hide();
+                //console.info(Id)
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    success: function (data) {
+                        console.info(data);
+                        $("#Id").val(data.Id);
+                        $("#name").val(data.Name);
+                        $("#address").val(data.Address);
+                        $("#status").val(data.Status);
+                        $("#date").val(data.Date);
+                        $("#notes").val(data.Notes);
+
+                    },
+
+                });
+            }
+        }
+    </script>
+}
+
