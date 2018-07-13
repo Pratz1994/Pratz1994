@@ -48,12 +48,17 @@
                 </select>
             </div>
             <div class="form-group">
+                <label for="address">Contact</label>
+                <input type="number" id="contact" name="contact" placeholder="please input the customer address" class="form-control" />
+            </div>
+
+            <div class="form-group">
                 <label for="address">Date</label>
                 <input id="date" name="date" placeholder="date" readonly class="form-control" />
             </div>
             <div class="form-group">
                 <label for="address">Notes</label>
-                <textarea type="text" id="notes" name="notes" placeholder="please input the customer address" class="form-control" ></textarea>
+                <textarea type="text" id="notes" name="notes" placeholder="please input the customer address" class="form-control"></textarea>
             </div>
             <div class="action text-right">
                 <div class="two fluid ui inverted buttons">
@@ -224,6 +229,7 @@
                         $("#Id").val(data.Id);
                         $("#name").val(data.Name);
                         $("#address").val(data.Address);
+                        $("#contact").val(data.Contact);
                         $("#status").val(data.Status);
                         $("#date").val(data.Date);
                         $("#notes").val(data.Notes);
