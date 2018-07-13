@@ -1,5 +1,4 @@
-# Pratz1994
-PratzRepository
+#PratzRepository
 
 # Introduction
 
