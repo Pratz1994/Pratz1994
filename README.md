@@ -21,7 +21,7 @@ http://propellerheadtechtest.azurewebsites.net/
 - Used AJAX calls (inside Js components) to communicate with controllers with help of get and post method. Inorder to send data to sql, I have used Entity Framework to autogenerate my model classes and edmx diagram.
 
 
-# About the files in the projects
+# About the files in the project
 
 - I have my views and scripts inside View folder.
 
