@@ -31,9 +31,6 @@ http://propellerheadtechtest.azurewebsites.net/
 
 - All class models in Model.edmx
 
-# On-Hold Task
-
-- The requirement mentions of a customer having one or more notes, Do I have to create multiple note text box or one single text box for each users in Company form?
 
 # Bugs 
 
